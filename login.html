@@ -4,58 +4,185 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign in to NextLM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0a0a0a; color: #e0e0e0;
-      display: flex; align-items: center; justify-content: center; min-height: 100vh;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #F3F4F6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-    .container {
-      background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px;
-      padding: 40px; width: 100%; max-width: 400px;
+    .header {
+      background: #030213;
+      padding: 32px 40px 28px;
+      text-align: center;
     }
-    .logo { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 8px; }
-    .subtitle { color: #888; font-size: 14px; margin-bottom: 32px; }
-    label { display: block; font-size: 13px; color: #aaa; margin-bottom: 6px; margin-top: 16px; }
-    input[type="email"], input[type="password"] {
-      width: 100%; padding: 10px 12px; background: #111; border: 1px solid #333;
-      border-radius: 6px; color: #fff; font-size: 15px; outline: none;
+    .logo { height: 32px; margin-bottom: 16px; }
+    .connection {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #9CA3AF;
+      font-size: 13px;
+      font-weight: 500;
     }
-    input:focus { border-color: #555; }
-    button {
-      width: 100%; padding: 12px; margin-top: 24px; background: #fff; color: #000;
-      border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer;
+    .connection-dot {
+      width: 6px; height: 6px;
+      background: #BCFC00;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(188, 252, 0, 0.5);
     }
-    button:hover { background: #ddd; }
-    button:disabled { background: #666; cursor: not-allowed; }
+    .claude-icon {
+      display: inline-flex;
+      align-items: center;
+    }
+    .claude-icon svg { height: 18px; width: 18px; }
+    .body {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 32px 24px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 36px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    }
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0B0F14;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+    .card-subtitle {
+      font-size: 13px;
+      color: #6B7280;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #0B0F14;
+      margin-bottom: 6px;
+    }
+    .field + .field { margin-top: 16px; }
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      background: #FFFFFF;
+      border: 1.5px solid #E5E7EB;
+      border-radius: 12px;
+      color: #0B0F14;
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: #BCFC00;
+      box-shadow: 0 0 0 3px rgba(188, 252, 0, 0.15);
+    }
+    input::placeholder { color: #9CA3AF; }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 24px;
+      background: #BCFC00;
+      color: #0B0F14;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    .btn:hover { background: #a8e600; }
+    .btn:disabled { background: #9ACA00; cursor: not-allowed; opacity: 0.7; }
     .error {
-      background: #2d1117; border: 1px solid #f8514966; color: #f85149;
-      padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 16px;
+      background: #FEE2E2;
+      color: #DC2626;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      text-align: center;
+      font-weight: 500;
     }
-    .note { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
-    .spinner { display: none; text-align: center; margin-top: 12px; color: #888; font-size: 13px; }
+    .spinner {
+      display: none;
+      text-align: center;
+      margin-top: 12px;
+      color: #6B7280;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .note {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 11px;
+      color: #9CA3AF;
+      letter-spacing: 0.02em;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="logo">NextLM</div>
-    <div class="subtitle">Connect your NextLM account to Claude</div>
-    <div id="error-box" class="error" style="display:none"></div>
-    <form id="login-form">
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" required autocomplete="email" />
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" required autocomplete="current-password" />
-      <button type="submit" id="submit-btn">Sign In</button>
-      <div id="spinner" class="spinner">Signing in...</div>
-    </form>
-    <div class="note">Requires Apex tier or higher</div>
+  <div class="header">
+    <img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAdkAAACkCAYAAADbjFSpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAF0mlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgMTAuMC1jMDAwIDc5LmQwNGNjMTY5OCwgMjAyNS8wNy8wMi0xMjoxODoxMyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0RXZ0PSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VFdmVudCMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI3LjIgKE1hY2ludG9zaCkiIHhtcDpDcmVhdGVEYXRlPSIyMDI1LTA5LTE3VDEzOjIyOjM0LTA0OjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyNi0wMS0wN1QxNzo1NTo1NS0wNTowMCIgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyNi0wMS0wN1QxNzo1NTo1NS0wNTowMCIgZGM6Zm9ybWF0PSJpbWFnZS9wbmciIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6ZTljNTg5MDAtYjljNS00MmNmLTg0OGEtY2NlMDcxNmZiMzk5IiB4bXBNTTpEb2N1bWVu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" alt="NextLM">
+    <div class="connection">
+      <span>NextLM</span>
+      <span class="connection-dot"></span>
+      <span class="claude-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#D97757"/>
+        </svg>
+      </span>
+      <span>Claude</span>
+    </div>
+  </div>
+  <div class="body">
+    <div class="card">
+      <div class="card-title">Sign In</div>
+      <div class="card-subtitle">Connect your NextLM account to Claude</div>
+      <div id="error-box" class="error" style="display:none"></div>
+      <form id="login-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@company.com" required autocomplete="email" />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn" id="submit-btn">Sign In</button>
+        <div id="spinner" class="spinner">Signing in...</div>
+      </form>
+      <div class="note">Requires Apex tier or higher</div>
+    </div>
   </div>
   <script>
     const params = new URLSearchParams(window.location.search);
-    // The proxy injects its own origin here at serve time
     const SERVER_URL = '__SERVER_URL__';
+
+    const errorMsg = params.get('error');
+    if (errorMsg) {
+      const box = document.getElementById('error-box');
+      box.textContent = decodeURIComponent(errorMsg);
+      box.style.display = 'block';
+    }
 
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -84,9 +211,7 @@
         const data = await resp.json();
 
         if (resp.ok && data.redirect_url) {
-          // Navigate to Claude's callback with the auth code
           window.location.href = data.redirect_url;
-          // Auto-close the popup after a brief delay
           setTimeout(() => { try { window.close(); } catch(e) {} }, 1500);
           return;
         } else {
