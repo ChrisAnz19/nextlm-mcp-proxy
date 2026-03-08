@@ -84,7 +84,11 @@
         const data = await resp.json();
 
         if (resp.ok && data.redirect_url) {
+          // Navigate to Claude's callback with the auth code
           window.location.href = data.redirect_url;
+          // Auto-close the popup after a brief delay
+          setTimeout(() => { try { window.close(); } catch(e) {} }, 1500);
+          return;
         } else {
           errorBox.textContent = data.error || 'Invalid email or password.';
           errorBox.style.display = 'block';
