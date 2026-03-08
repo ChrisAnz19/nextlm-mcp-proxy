@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in to NextLM</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0a0a0a; color: #e0e0e0;
+      display: flex; align-items: center; justify-content: center; min-height: 100vh;
+    }
+    .container {
+      background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px;
+      padding: 40px; width: 100%; max-width: 400px;
+    }
+    .logo { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .subtitle { color: #888; font-size: 14px; margin-bottom: 32px; }
+    label { display: block; font-size: 13px; color: #aaa; margin-bottom: 6px; margin-top: 16px; }
+    input[type="email"], input[type="password"] {
+      width: 100%; padding: 10px 12px; background: #111; border: 1px solid #333;
+      border-radius: 6px; color: #fff; font-size: 15px; outline: none;
+    }
+    input:focus { border-color: #555; }
+    button {
+      width: 100%; padding: 12px; margin-top: 24px; background: #fff; color: #000;
+      border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer;
+    }
+    button:hover { background: #ddd; }
+    button:disabled { background: #666; cursor: not-allowed; }
+    .error {
+      background: #2d1117; border: 1px solid #f8514966; color: #f85149;
+      padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 16px;
+    }
+    .note { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+    .spinner { display: none; text-align: center; margin-top: 12px; color: #888; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">NextLM</div>
+    <div class="subtitle">Connect your NextLM account to Claude</div>
+    <div id="error-box" class="error" style="display:none"></div>
+    <form id="login-form">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required autocomplete="email" />
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required autocomplete="current-password" />
+      <button type="submit" id="submit-btn">Sign In</button>
+      <div id="spinner" class="spinner">Signing in...</div>
+    </form>
+    <div class="note">Requires Apex tier or higher</div>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    // The proxy injects its own origin here at serve time
+    const SERVER_URL = '__SERVER_URL__';
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const spinner = document.getElementById('spinner');
+      const errorBox = document.getElementById('error-box');
+      errorBox.style.display = 'none';
+      btn.disabled = true;
+      spinner.style.display = 'block';
+
+      try {
+        const resp = await fetch(SERVER_URL + '/authorize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            client_id: params.get('client_id') || '',
+            redirect_uri: params.get('redirect_uri') || '',
+            code_challenge: params.get('code_challenge') || '',
+            code_challenge_method: params.get('code_challenge_method') || 'S256',
+            state: params.get('state') || '',
+          }),
+        });
+
+        const data = await resp.json();
+
+        if (resp.ok && data.redirect_url) {
+          window.location.href = data.redirect_url;
+        } else {
+          errorBox.textContent = data.error || 'Invalid email or password.';
+          errorBox.style.display = 'block';
+          btn.disabled = false;
+          spinner.style.display = 'none';
+        }
+      } catch (err) {
+        errorBox.textContent = 'Connection error. Please try again.';
+        errorBox.style.display = 'block';
+        btn.disabled = false;
+        spinner.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
