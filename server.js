@@ -5,6 +5,7 @@ import { dirname, join } from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
+app.set("trust proxy", 1); // Trust Render's reverse proxy for correct protocol (https)
 const PORT = process.env.PORT || 3001;
 
 const SUPABASE_MCP = "https://wlraonpolaioetvfooeo.supabase.co/functions/v1/mcp-server";
